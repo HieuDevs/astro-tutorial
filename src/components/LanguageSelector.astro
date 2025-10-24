@@ -1,0 +1,233 @@
+---
+// Default to English for server-side rendering
+const currentLang = "en";
+const languages = [
+  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
+  { code: "ja", name: "日本語", flag: "🇯🇵" },
+  { code: "ko", name: "한국어", flag: "🇰🇷" },
+  { code: "zh", name: "中文", flag: "🇨🇳" },
+];
+---
+
+<div class="language-selector">
+  <button
+    id="language-toggle"
+    class="language-toggle"
+    aria-label="Select language"
+    aria-expanded="false"
+    aria-haspopup="true"
+  >
+    <span class="current-lang">
+      {languages.find((lang) => lang.code === currentLang)?.flag || "🌐"}
+    </span>
+    <svg
+      class="dropdown-icon"
+      width="12"
+      height="12"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+    >
+      <polyline points="6,9 12,15 18,9"></polyline>
+    </svg>
+  </button>
+
+  <div class="language-menu" id="language-menu">
+    {
+      languages.map((lang) => (
+        <button
+          class={`language-option ${lang.code === currentLang ? "active" : ""}`}
+          data-lang={lang.code}
+          aria-label={`Switch to ${lang.name}`}
+        >
+          <span class="flag">{lang.flag}</span>
+          <span class="name">{lang.name}</span>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .language-selector {
+    position: relative;
+    display: inline-block;
+  }
+
+  .language-toggle {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    padding: var(--space-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+    min-width: 60px;
+    height: 40px;
+  }
+
+  .language-toggle:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-primary);
+  }
+
+  .current-lang {
+    font-size: 16px;
+  }
+
+  .dropdown-icon {
+    transition: transform 0.2s ease;
+  }
+
+  .language-toggle[aria-expanded="true"] .dropdown-icon {
+    transform: rotate(180deg);
+  }
+
+  .language-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-md);
+    min-width: 150px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+  }
+
+  .language-menu.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+
+  .language-option {
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    padding: var(--space-sm) var(--space-md);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-align: left;
+  }
+
+  .language-option:hover {
+    background: var(--bg-secondary);
+  }
+
+  .language-option.active {
+    background: var(--bg-accent);
+    color: var(--text-primary);
+  }
+
+  .language-option:first-child {
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .language-option:last-child {
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+  }
+
+  .flag {
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+
+  .name {
+    font-size: var(--text-sm);
+  }
+</style>
+
+<script>
+  const languageToggle = document.getElementById("language-toggle");
+  const languageMenu = document.getElementById("language-menu");
+  const languageOptions = document.querySelectorAll(".language-option");
+
+  // Update UI to reflect current language
+  function updateLanguageUI() {
+    const currentLang = localStorage.getItem("language") || "en";
+    const currentLangElement = languageToggle?.querySelector(".current-lang");
+    const languages = [
+      { code: "en", name: "English", flag: "🇺🇸" },
+      { code: "vi", name: "Tiếng Việt", flag: "🇻🇳" },
+      { code: "ja", name: "日本語", flag: "🇯🇵" },
+      { code: "ko", name: "한국어", flag: "🇰🇷" },
+      { code: "zh", name: "中文", flag: "🇨🇳" },
+    ];
+
+    const currentLangData = languages.find((lang) => lang.code === currentLang);
+    if (currentLangElement && currentLangData) {
+      currentLangElement.textContent = currentLangData.flag;
+    }
+
+    // Update active state
+    languageOptions.forEach((option) => {
+      const lang = option.getAttribute("data-lang");
+      if (lang === currentLang) {
+        option.classList.add("active");
+      } else {
+        option.classList.remove("active");
+      }
+    });
+  }
+
+  function setLanguage(lang: string) {
+    localStorage.setItem("language", lang);
+    // Update data-lang attribute immediately
+    document.documentElement.setAttribute("data-lang", lang);
+    // Trigger custom event for same-page updates
+    window.dispatchEvent(
+      new CustomEvent("languageChanged", { detail: { lang } })
+    );
+    // Update UI immediately
+    updateLanguageUI();
+  }
+
+  function toggleMenu() {
+    const isOpen = languageMenu?.classList.contains("open");
+    if (isOpen) {
+      languageMenu?.classList.remove("open");
+      languageToggle?.setAttribute("aria-expanded", "false");
+    } else {
+      languageMenu?.classList.add("open");
+      languageToggle?.setAttribute("aria-expanded", "true");
+    }
+  }
+
+  function closeMenu() {
+    languageMenu?.classList.remove("open");
+    languageToggle?.setAttribute("aria-expanded", "false");
+  }
+
+  languageToggle?.addEventListener("click", (e) => {
+    e.stopPropagation();
+    toggleMenu();
+  });
+
+  languageOptions.forEach((option) => {
+    option.addEventListener("click", () => {
+      const lang = option.getAttribute("data-lang");
+      if (lang) {
+        setLanguage(lang);
+      }
+    });
+  });
+
+  document.addEventListener("click", closeMenu);
+
+  // Initialize UI
+  updateLanguageUI();
+</script>

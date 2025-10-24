@@ -1,5 +1,11 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import { getTranslation } from "../utils/i18n";
+
+// Default to English for server-side rendering
+const lang = "en";
+const t = (key: string) => getTranslation(lang, key);
+const pageTitle = t("about.title");
 
 const identity = {
   firstName: "Bui Hieu",
@@ -13,55 +19,219 @@ const skills = ["HTML", "CSS", "JavaScript", "React", "Astro", "Writing Docs"];
 const happy = true;
 const finished = false;
 const goal = 3;
-
-const skillColor = "crimson";
-const fontWeight = "bold";
-const textCase = "uppercase";
-
-const pageTitle = "About Me";
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <style
-    define:vars={{
-      fontWeight,
-      skillColor,
-      textCase,
-    }}
-  >
-    .skill {
-      color: var(--skillColor);
-      font-weight: var(--fontWeight);
-      text-transform: var(--textCase);
+  <div class="about-container">
+    <section class="intro-section">
+      <div class="profile-card">
+        <div class="profile-header">
+          <h2>{t("about.greeting")} {identity.firstName}</h2>
+        </div>
+        <div class="profile-content">
+          <div class="info-item">
+            <span>{t("about.basedIn")} <strong>{identity.country}</strong></span
+            >
+          </div>
+          <div class="info-item">
+            <span
+              >{t("about.workingAs")}
+              <strong>{identity.occupation}</strong></span
+            >
+          </div>
+          {
+            identity.hobbies.length >= 2 && (
+              <div class="info-item">
+                <span>
+                  {t("about.enjoy")} <strong>{identity.hobbies[0]}</strong>{" "}
+                  {t("about.and")} <strong>{identity.hobbies[1]}</strong>
+                </span>
+              </div>
+            )
+          }
+        </div>
+      </div>
+    </section>
+
+    <section class="skills-section">
+      <h3>{t("about.skills")}</h3>
+      <div class="skills-grid">
+        {
+          skills.map((skill) => (
+            <div class="skill-badge">
+              <span>{skill}</span>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="status-section">
+      {
+        happy && (
+          <div class="status-card happy">
+            <p>{t("about.happy")}</p>
+          </div>
+        )
+      }
+
+      {
+        finished && (
+          <div class="status-card finished">
+            <p>{t("about.finished")}</p>
+          </div>
+        )
+      }
+
+      {
+        goal === 3 ? (
+          <div class="status-card goal">
+            <p>{t("about.goal")}</p>
+          </div>
+        ) : (
+          <div class="status-card goal">
+            <p>{t("about.goalNot")}</p>
+          </div>
+        )
+      }
+    </section>
+  </div>
+
+  <style>
+    .about-container {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: var(--space-xl) var(--space-md);
+    }
+
+    .intro-section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .profile-card {
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      transition: all 0.2s ease;
+    }
+
+    .profile-card:hover {
+      border-color: var(--text-primary);
+    }
+
+    .profile-header {
+      background: var(--bg-secondary);
+      padding: var(--space-xl);
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .profile-header h2 {
+      color: var(--text-primary);
+      margin: 0;
+      font-size: var(--text-2xl);
+      font-weight: 300;
+    }
+
+    .profile-content {
+      padding: var(--space-xl);
+      background: var(--bg-primary);
+    }
+
+    .info-item {
+      padding: var(--space-md);
+      margin-bottom: var(--space-sm);
+      background: var(--bg-secondary);
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .info-item:hover {
+      background: var(--bg-accent);
+      border-color: var(--text-primary);
+    }
+
+    .info-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .skills-section {
+      margin-bottom: var(--space-2xl);
+    }
+
+    .skills-section h3 {
+      font-size: var(--text-xl);
+      margin-bottom: var(--space-lg);
+      color: var(--text-primary);
+      text-align: center;
+      font-weight: 300;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .skill-badge {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+      padding: var(--space-md) var(--space-lg);
+      border-radius: var(--radius-sm);
+      text-align: center;
+      font-weight: 400;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
+    }
+
+    .skill-badge:hover {
+      background: var(--bg-accent);
+      border-color: var(--text-primary);
+    }
+
+    .status-section {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .status-card {
+      padding: var(--space-lg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-color);
+      transition: all 0.2s ease;
+      background: var(--bg-secondary);
+    }
+
+    .status-card:hover {
+      border-color: var(--text-primary);
+    }
+
+    .status-card p {
+      margin: 0;
+      font-size: var(--text-base);
+      font-weight: 400;
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 768px) {
+      .about-container {
+        padding: var(--space-md);
+      }
+
+      .profile-header h2 {
+        font-size: var(--text-xl);
+      }
+
+      .skills-grid {
+        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      }
+
+      .status-card {
+        padding: var(--space-md);
+      }
     }
   </style>
-  <p>Here are a few facts about me:</p>
-  <ul>
-    <li>My name is {identity.firstName}.</li>
-    <li>
-      I live in {identity.country} and I work as a {identity.occupation}.
-    </li>
-    {
-      identity.hobbies.length >= 2 && (
-        <li>
-          Two of my hobbies are: {identity.hobbies[0]} and {identity.hobbies[1]}
-        </li>
-      )
-    }
-  </ul>
-  <p>My skills are:</p>
-  <ul>
-    {skills.map((skill) => <li class="skill">{skill}</li>)}
-  </ul>
-  {happy && <p>I am happy to be learning Astro!</p>}
-
-  {finished && <p>I finished this tutorial!</p>}
-
-  {
-    goal === 3 ? (
-      <p>My goal is to finish in 3 days.</p>
-    ) : (
-      <p>My goal is not 3 days.</p>
-    )
-  }
 </BaseLayout>

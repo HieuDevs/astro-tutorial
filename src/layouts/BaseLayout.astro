@@ -2,24 +2,139 @@
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import "../styles/global.css";
-const { pageTitle } = Astro.props;
+import { getCurrentLanguage } from "../utils/i18n";
+
+const {
+  pageTitle,
+  description = "HieuDevs - Building beautiful web experiences with modern technologies",
+  keywords = "web development, frontend, astro, javascript, typescript",
+  image = "/favicon.svg",
+} = Astro.props;
+
+const lang = getCurrentLanguage();
 ---
 
-<html lang="en">
+<!doctype html>
+<html lang={lang}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="generator" content={Astro.generator} />
-    <title>{pageTitle}</title>
+
+    <!-- Prevent theme and language flickering -->
+    <script is:inline>
+      (function () {
+        try {
+          const theme = localStorage.getItem("theme") || "light";
+          document.documentElement.setAttribute("data-theme", theme);
+          document.documentElement.style.colorScheme = theme;
+
+          const lang = localStorage.getItem("language") || "en";
+          document.documentElement.setAttribute("data-lang", lang);
+        } catch (e) {
+          // Fallback if localStorage is not available
+          document.documentElement.setAttribute("data-theme", "light");
+          document.documentElement.setAttribute("data-lang", "en");
+        }
+      })();
+    </script>
+
+    <!-- Primary Meta Tags -->
+    <title>{pageTitle} | HieuDevs</title>
+    <meta name="title" content={`${pageTitle} | HieuDevs`} />
+    <meta name="description" content={description} />
+    <meta name="keywords" content={keywords} />
+    <meta name="author" content="HieuDevs" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={Astro.url} />
+    <meta property="og:title" content={`${pageTitle} | HieuDevs`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={image} />
+    <meta property="og:site_name" content="HieuDevs" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content={Astro.url} />
+    <meta property="twitter:title" content={`${pageTitle} | HieuDevs`} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content={image} />
+
+    <!-- Additional Meta Tags -->
+    <meta name="robots" content="index, follow" />
+    <meta name="theme-color" content="#000000" />
+    <link rel="canonical" href={Astro.url} />
+
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
     <Header />
-    <h1>{pageTitle}</h1>
-    <slot />
+    <main>
+      <slot />
+    </main>
     <Footer />
     <script>
       import "../scripts/menu.js";
+
+      // Client-side language switching
+      function updatePageLanguage() {
+        const lang = document.documentElement.getAttribute("data-lang") || "en";
+        const elements = document.querySelectorAll("[data-translate]");
+
+        // Batch all translation requests
+        const translationPromises = Array.from(elements).map(
+          async (element) => {
+            const key = element.getAttribute("data-translate");
+            if (key) {
+              try {
+                const { getTranslation } = await import("../utils/i18n.js");
+                const translation = getTranslation(lang, key);
+                if (
+                  element.tagName === "INPUT" &&
+                  (element as HTMLInputElement).type === "text"
+                ) {
+                  (element as HTMLInputElement).placeholder = translation;
+                } else {
+                  element.textContent = translation;
+                }
+              } catch (error) {
+                console.warn(`Failed to translate key: ${key}`, error);
+              }
+            }
+          }
+        );
+
+        // Wait for all translations to complete
+        Promise.all(translationPromises).catch(console.error);
+      }
+
+      // Update language immediately when DOM is ready
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", updatePageLanguage);
+      } else {
+        updatePageLanguage();
+      }
+
+      // Listen for language changes
+      window.addEventListener("languageChanged", (e) => {
+        // Update data-lang attribute
+        const lang =
+          (e as CustomEvent).detail?.lang ||
+          localStorage.getItem("language") ||
+          "en";
+        document.documentElement.setAttribute("data-lang", lang);
+        updatePageLanguage();
+      });
     </script>
   </body>
 </html>

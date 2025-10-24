@@ -1,14 +1,93 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BlogPost from "../components/BlogPost.astro";
+import { getTranslation } from "../utils/i18n";
 
-const pageTitle = "My Blog";
+// Default to English for server-side rendering
+const lang = "en";
+const t = (key: string) => getTranslation(lang, key);
+const pageTitle = t("blog.title");
+
+const allPosts = Object.values(
+  import.meta.glob("./posts/*.md", { eager: true })
+);
 ---
 
 <BaseLayout pageTitle={pageTitle}>
-  <p>This is where I will post about my journey learning Astro.</p>
-  <ul>
-    <li><a href="/posts/post-1/">Post 1</a></li>
-    <li><a href="/posts/post-2/">Post 2</a></li>
-    <li><a href="/posts/post-3/">Post 3</a></li>
-  </ul>
+  <div class="blog-container">
+    <section class="blog-intro">
+      <p class="intro-text">
+        {t("blog.subtitle")}
+      </p>
+    </section>
+
+    <section class="posts-section">
+      <h2 class="posts-heading">{t("blog.recentPosts")}</h2>
+      <div class="posts-grid">
+        {
+          allPosts.map((post: any) => (
+            <BlogPost title={post.frontmatter.title} url={post.url} />
+          ))
+        }
+      </div>
+    </section>
+  </div>
 </BaseLayout>
+
+<style>
+  .blog-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .blog-intro {
+    margin-bottom: var(--space-2xl);
+    text-align: center;
+  }
+
+  .intro-text {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: var(--space-lg);
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+  }
+
+  .posts-section {
+    margin-top: var(--space-xl);
+  }
+
+  .posts-heading {
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: var(--space-lg);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .posts-grid {
+    display: grid;
+    gap: var(--space-lg);
+    list-style: none;
+    padding: 0;
+  }
+
+  @media (max-width: 768px) {
+    .blog-container {
+      padding: var(--space-md);
+    }
+
+    .intro-text {
+      font-size: var(--text-base);
+      padding: var(--space-md);
+    }
+
+    .posts-heading {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

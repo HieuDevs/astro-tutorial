@@ -1,0 +1,43 @@
+---
+const { title, url } = Astro.props;
+---
+
+<li class="blog-post-item">
+  <a href={url} class="post-link">
+    <h3 class="post-title">{title}</h3>
+  </a>
+</li>
+
+<style>
+  .blog-post-item {
+    list-style: none;
+    margin: 0;
+  }
+
+  .post-link {
+    display: block;
+    padding: var(--space-lg);
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+
+  .post-link:hover {
+    border-color: var(--text-primary);
+    background: var(--bg-secondary);
+  }
+
+  .post-title {
+    font-size: var(--text-lg);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .post-link:hover .post-title {
+    color: var(--text-primary);
+  }
+</style>

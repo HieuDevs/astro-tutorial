@@ -2,8 +2,83 @@
 import "../styles/global.css";
 ---
 
-<div id="main-menu" class="nav-links">
-  <a href="/">Home</a>
-  <a href="/about/">About</a>
-  <a href="/blog/">Blog</a>
-</div>
+<nav
+  id="main-menu"
+  class="nav-links"
+  role="navigation"
+  aria-label="Main navigation"
+>
+  <a href="/" class="nav-link">
+    <span data-translate="nav.home"></span>
+  </a>
+  <a href="/about/" class="nav-link">
+    <span data-translate="nav.about"></span>
+  </a>
+  <a href="/blog/" class="nav-link">
+    <span data-translate="nav.blog"></span>
+  </a>
+  <a href="/tags/" class="nav-link">
+    <span data-translate="nav.tags"></span>
+  </a>
+</nav>
+
+<style>
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  .nav-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) var(--space-md);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--text-primary);
+    border-radius: var(--radius-sm);
+    transition: all 0.2s ease;
+  }
+
+  .nav-link:hover {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+  }
+
+  @media (max-width: 767px) {
+    .nav-links {
+      display: none;
+      flex-direction: column;
+      width: 100%;
+      background: var(--bg-primary);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      animation: slideDown 0.3s ease-out;
+      margin-top: var(--space-md);
+    }
+
+    .nav-links.mobile-open {
+      display: flex;
+    }
+
+    .nav-link {
+      width: 100%;
+      justify-content: flex-start;
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-color);
+      border-radius: 0;
+    }
+
+    .nav-link:last-child {
+      border-bottom: none;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+  }
+</style>

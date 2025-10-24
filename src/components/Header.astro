@@ -1,11 +1,65 @@
 ---
 import Navigation from "./Navigation.astro";
 import Menu from "./Menu.astro";
+import ThemeToggle from "./ThemeToggle.astro";
+import LanguageSelector from "./LanguageSelector.astro";
+import { getTranslation } from "../utils/i18n";
 ---
 
 <header>
   <nav>
-    <Menu />
+    <div class="brand">
+      <a href="/" class="brand-link">
+        <span class="brand-text">HieuDevs</span>
+      </a>
+    </div>
     <Navigation />
+    <div class="header-controls">
+      <LanguageSelector />
+      <ThemeToggle />
+      <Menu />
+    </div>
   </nav>
 </header>
+
+<style>
+  .brand {
+    display: flex;
+    align-items: center;
+  }
+
+  .brand-link {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 400;
+    font-size: var(--text-lg);
+    transition: all 0.2s ease;
+  }
+
+  .brand-link:hover {
+    color: var(--text-secondary);
+  }
+
+  .brand-text {
+    letter-spacing: -0.02em;
+  }
+
+  .header-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+  }
+
+  @media (max-width: 768px) {
+    .brand-text {
+      font-size: var(--text-base);
+    }
+
+    .header-controls {
+      gap: var(--space-xs);
+    }
+  }
+</style>

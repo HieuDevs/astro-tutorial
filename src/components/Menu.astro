@@ -2,6 +2,43 @@
 
 ---
 
-<button aria-expanded="false" aria-controls="main-menu" class="menu">
-  Menu
+<button
+  aria-expanded="false"
+  aria-controls="main-menu"
+  class="menu"
+  aria-label="Toggle navigation menu"
+>
+  <span class="menu-text" data-translate="common.menu"></span>
 </button>
+
+<style>
+  .menu {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    padding: var(--space-sm) var(--space-md);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .menu:hover {
+    background: var(--bg-secondary);
+    border-color: var(--text-primary);
+  }
+
+  .menu-text {
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 768px) {
+    .menu {
+      display: none;
+    }
+  }
+</style>

@@ -1,0 +1,189 @@
+---
+import Tags from "../components/Tags.astro";
+import BaseLayout from "./BaseLayout.astro";
+const { frontmatter } = Astro.props;
+---
+
+<BaseLayout pageTitle={frontmatter.title}>
+  <article class="blog-post">
+    <header class="post-header">
+      <h1 class="post-title">{frontmatter.title}</h1>
+      <div class="post-meta">
+        <time class="post-date" datetime={frontmatter.pubDate}>
+          {frontmatter.pubDate.toString().slice(0, 10)}
+        </time>
+        <span class="post-author">{frontmatter.author}</span>
+      </div>
+      <p class="post-description">{frontmatter.description}</p>
+    </header>
+
+    {
+      frontmatter.image && (
+        <div class="post-image">
+          <img src={frontmatter.image.url} alt={frontmatter.image.alt} />
+        </div>
+      )
+    }
+
+    <Tags tags={frontmatter.tags} />
+
+    <div class="post-content">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .blog-post {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .post-header {
+    margin-bottom: var(--space-xl);
+    text-align: center;
+  }
+
+  .post-title {
+    font-size: var(--text-4xl);
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+    line-height: 1.2;
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-xl);
+    flex-wrap: wrap;
+    margin-bottom: var(--space-md);
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+  }
+
+  .post-date,
+  .post-author {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .post-description {
+    font-size: var(--text-lg);
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-top: var(--space-md);
+    font-style: italic;
+  }
+
+  .post-image {
+    margin: var(--space-xl) 0;
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+
+  .post-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.2s ease;
+  }
+
+  .post-image:hover img {
+    transform: scale(1.01);
+  }
+
+  .post-content {
+    margin-top: var(--space-2xl);
+    line-height: 1.7;
+    font-size: var(--text-base);
+    color: var(--text-primary);
+  }
+
+  .post-content :global(h2) {
+    margin-top: var(--space-2xl);
+    margin-bottom: var(--space-md);
+    font-size: var(--text-2xl);
+    font-weight: 300;
+    color: var(--text-primary);
+  }
+
+  .post-content :global(h3) {
+    margin-top: var(--space-xl);
+    margin-bottom: var(--space-sm);
+    font-size: var(--text-xl);
+    font-weight: 400;
+    color: var(--text-primary);
+  }
+
+  .post-content :global(p) {
+    margin-bottom: var(--space-lg);
+  }
+
+  .post-content :global(a) {
+    color: var(--text-primary);
+    text-decoration: underline;
+    text-decoration-color: var(--text-light);
+    text-underline-offset: 2px;
+    transition: all 0.2s ease;
+  }
+
+  .post-content :global(a:hover) {
+    text-decoration-color: var(--text-primary);
+  }
+
+  .post-content :global(code) {
+    background: var(--bg-secondary);
+    padding: var(--space-xs) var(--space-sm);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-sm);
+    color: var(--text-primary);
+    border: 1px solid var(--border-color);
+  }
+
+  .post-content :global(pre) {
+    background: var(--bg-secondary);
+    padding: var(--space-lg);
+    border-radius: var(--radius-md);
+    overflow-x: auto;
+    margin: var(--space-lg) 0;
+    border: 1px solid var(--border-color);
+  }
+
+  .post-content :global(pre code) {
+    background: none;
+    color: var(--text-primary);
+    padding: 0;
+    border: none;
+  }
+
+  .post-content :global(blockquote) {
+    border-left: 2px solid var(--border-color);
+    padding-left: var(--space-lg);
+    margin: var(--space-lg) 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  @media (max-width: 768px) {
+    .post-title {
+      font-size: var(--text-3xl);
+    }
+
+    .post-meta {
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .post-description {
+      font-size: var(--text-base);
+    }
+
+    .post-content {
+      font-size: var(--text-sm);
+    }
+  }
+</style>

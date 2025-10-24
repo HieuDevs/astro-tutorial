@@ -2,18 +2,116 @@
 import Social from "./Social.astro";
 ---
 
+<footer>
+  <div class="footer-content">
+    <div class="footer-brand">
+      <div class="brand-info">
+        <h3 data-translate="footer.brand"></h3>
+        <p data-translate="footer.description"></p>
+      </div>
+    </div>
+
+    <div class="footer-social">
+      <h4 data-translate="footer.connect"></h4>
+      <div class="social-links">
+        <Social platform="github" username="HieuDevs" />
+        <Social
+          platform="linkedin"
+          link="https://www.linkedin.com/in/hi%E1%BB%87u-b%C3%B9i-55140b2bb/"
+        />
+      </div>
+    </div>
+
+    <div class="footer-meta">
+      <p>
+        &copy; 2024 <span data-translate="footer.copyright"></span>
+      </p>
+      <p data-translate="footer.builtWith"></p>
+    </div>
+  </div>
+</footer>
+
 <style>
   footer {
+    background: var(--bg-primary);
+    border-top: 1px solid var(--border-color);
+    padding: var(--space-xl);
+    margin-top: var(--space-3xl);
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .footer-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: var(--space-xl);
+    align-items: start;
+  }
+
+  .footer-brand h3 {
+    font-size: var(--text-xl);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--space-sm);
+  }
+
+  .footer-brand p {
+    color: var(--text-secondary);
+    font-size: var(--text-sm);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .footer-social h4 {
+    font-size: var(--text-base);
+    font-weight: 400;
+    color: var(--text-primary);
+    margin-bottom: var(--space-md);
+  }
+
+  .social-links {
     display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: var(--space-md);
+    flex-wrap: wrap;
+  }
+
+  .footer-meta {
+    text-align: right;
+  }
+
+  .footer-meta p {
+    color: var(--text-light);
+    font-size: var(--text-xs);
+    margin: var(--space-xs) 0;
+  }
+
+  @media (max-width: 768px) {
+    footer {
+      padding: var(--space-lg) var(--space-md);
+    }
+
+    .footer-content {
+      grid-template-columns: 1fr;
+      gap: var(--space-lg);
+      text-align: center;
+    }
+
+    .footer-meta {
+      text-align: center;
+    }
+
+    .social-links {
+      justify-content: center;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .social-links {
+      flex-direction: column;
+      align-items: center;
+    }
   }
 </style>
-
-<footer>
-  <Social platform="github" username="HieuDevs" />
-  <Social
-    platform="linkedin"
-    link="https://www.linkedin.com/in/hi%E1%BB%87u-b%C3%B9i-55140b2bb/"
-  />
-</footer>

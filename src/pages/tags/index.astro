@@ -1,0 +1,40 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import Tags from "../../components/Tags.astro";
+import { getTranslation } from "../../utils/i18n";
+
+// Default to English for server-side rendering
+const lang = "en";
+const t = (key: string) => getTranslation(lang, key);
+const pageTitle = t("tags.title");
+
+const allPosts = Object.values(
+  import.meta.glob("../posts/*.md", { eager: true })
+);
+const tags = [
+  ...new Set(allPosts.flatMap((post: any) => post.frontmatter.tags)),
+];
+---
+
+<BaseLayout pageTitle={pageTitle}>
+  <div class="tags-page">
+    <h1>{pageTitle}</h1>
+    <Tags tags={tags} />
+  </div>
+</BaseLayout>
+
+<style>
+  .tags-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+    text-align: center;
+  }
+
+  .tags-page h1 {
+    font-size: var(--text-3xl);
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xl);
+  }
+</style>

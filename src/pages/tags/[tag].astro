@@ -1,0 +1,64 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import BlogPost from "../../components/BlogPost.astro";
+import { getTranslation } from "../../utils/i18n";
+
+// Default to English for server-side rendering
+const lang = "en";
+const t = (key: string) => getTranslation(lang, key);
+
+export async function getStaticPaths() {
+  const allPosts = Object.values(
+    import.meta.glob("../posts/*.md", { eager: true })
+  );
+
+  const uniqueTags = [
+    ...new Set(allPosts.flatMap((post: any) => post.frontmatter.tags)),
+  ];
+  return uniqueTags.map((tag) => ({
+    params: { tag },
+    props: {
+      posts: allPosts.filter((post: any) =>
+        post.frontmatter.tags.includes(tag)
+      ),
+    },
+  }));
+}
+
+const { tag } = Astro.params;
+const { posts } = Astro.props;
+---
+
+<BaseLayout pageTitle={tag}>
+  <div class="tag-page">
+    <h1>{t("blog.postsTagged")} {tag}</h1>
+    <div class="posts-list">
+      {
+        posts.map((post: any) => (
+          <BlogPost title={post.frontmatter.title} url={post.url} />
+        ))
+      }
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .tag-page {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-xl) var(--space-md);
+  }
+
+  .tag-page h1 {
+    font-size: var(--text-3xl);
+    font-weight: 300;
+    color: var(--text-primary);
+    margin-bottom: var(--space-xl);
+    text-align: center;
+  }
+
+  .posts-list {
+    display: grid;
+    gap: var(--space-md);
+  }
+</style>
